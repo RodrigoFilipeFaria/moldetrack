@@ -1,0 +1,85 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Operador {
+  id         String           @id @default(cuid())
+  nome       String
+  cor        String           @default("#F2B705")
+  ativo      Boolean          @default(true)
+  createdAt  DateTime         @default(now())
+  problemas  Problema[]
+  movimentos MovimentoStock[]
+}
+
+model Molde {
+  id         String     @id @default(cuid())
+  codigo     String     @unique
+  nome       String
+  descricao  String?
+  createdAt  DateTime   @default(now())
+  pecas      Peca[]
+  problemas  Problema[]
+}
+
+model Peca {
+  id          String           @id @default(cuid())
+  moldeId     String
+  molde       Molde            @relation(fields: [moldeId], references: [id], onDelete: Cascade)
+  codigo      String
+  nome        String
+  quantidade  Int              @default(0)
+  stockMinimo Int              @default(0)
+  createdAt   DateTime         @default(now())
+  problemas   Problema[]
+  movimentos  MovimentoStock[]
+}
+
+enum Gravidade {
+  baixa
+  media
+  alta
+}
+
+enum EstadoProblema {
+  aberto
+  em_resolucao
+  fechado
+}
+
+model Problema {
+  id         String         @id @default(cuid())
+  moldeId    String
+  molde      Molde          @relation(fields: [moldeId], references: [id], onDelete: Cascade)
+  pecaId     String?
+  peca       Peca?          @relation(fields: [pecaId], references: [id])
+  operadorId String
+  operador   Operador       @relation(fields: [operadorId], references: [id])
+  descricao  String
+  gravidade  Gravidade      @default(media)
+  estado     EstadoProblema @default(aberto)
+  createdAt  DateTime       @default(now())
+  resolvedAt DateTime?
+}
+
+enum TipoMovimento {
+  entrada
+  saida
+}
+
+model MovimentoStock {
+  id         String        @id @default(cuid())
+  pecaId     String
+  peca       Peca          @relation(fields: [pecaId], references: [id], onDelete: Cascade)
+  tipo       TipoMovimento
+  quantidade Int
+  motivo     String?
+  operadorId String
+  operador   Operador      @relation(fields: [operadorId], references: [id])
+  createdAt  DateTime      @default(now())
+}
