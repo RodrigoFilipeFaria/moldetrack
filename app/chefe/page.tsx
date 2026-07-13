@@ -1,6 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { labelEstado, labelGravidade, lampClassEstado, corGravidade, formatarData } from "@/lib/format";
 
+export const dynamic = "force-dynamic";
+
 export default async function ChefePage() {
   const [problemasAbertos, pecas, problemas] = await Promise.all([
     prisma.problema.count({ where: { estado: { not: "fechado" } } }),
