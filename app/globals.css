@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+:root {
+  --color-graphite: #16181b;
+  --color-panel: #212428;
+  --color-panel-2: #292d32;
+  --color-line: #383d43;
+  --color-text: #e9e6df;
+  --color-text-dim: #9aa0a6;
+  --color-orange: #ff6a13;
+  --color-amber: #f2b705;
+  --color-green: #2fa84f;
+  --color-red: #e5383b;
+}
+
+@theme inline {
+  --color-graphite: var(--color-graphite);
+  --color-panel: var(--color-panel);
+  --color-panel-2: var(--color-panel-2);
+  --color-line: var(--color-line);
+  --color-orange: var(--color-orange);
+  --color-amber: var(--color-amber);
+  --color-green: var(--color-green);
+  --color-red: var(--color-red);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background: var(--color-graphite);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.font-mono, code {
+  font-family: var(--font-mono), monospace;
+}
+
+.panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 0.375rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1.25rem;
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 600;
+  transition: filter 0.15s ease, transform 0.05s ease;
+  cursor: pointer;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--color-orange); color: #1a1a1a; }
+.btn-primary:hover { filter: brightness(1.1); }
+.btn-secondary { background: var(--color-panel-2); color: var(--color-text); border: 1px solid var(--color-line); }
+.btn-secondary:hover { filter: brightness(1.15); }
+.btn-danger { background: var(--color-red); color: #fff; }
+
+.input {
+  background: var(--color-graphite);
+  border: 1px solid var(--color-line);
+  border-radius: 0.375rem;
+  padding: 0.6rem 0.75rem;
+  color: var(--color-text);
+  width: 100%;
+}
+.input:focus { outline: 2px solid var(--color-amber); outline-offset: 1px; }
+
+.lamp {
+  display: inline-block;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 9999px;
+  box-shadow: 0 0 6px currentColor;
+}
+.lamp-red { background: var(--color-red); color: var(--color-red); }
+.lamp-amber { background: var(--color-amber); color: var(--color-amber); }
+.lamp-green { background: var(--color-green); color: var(--color-green); }
+
+::selection { background: var(--color-orange); color: #1a1a1a; }
