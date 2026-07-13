@@ -6,12 +6,22 @@ import { registarMovimento } from "./actions";
 export default async function StockPage({
   searchParams,
 }: {
-  searchParams: Promise<{ erro?: string }>;
+  searchParams: Promise<{ erro?: string; q?: string }>;
 }) {
   const operador = await requireOperador();
-  const { erro } = await searchParams;
+  const { erro, q } = await searchParams;
 
   const pecas = await prisma.peca.findMany({
+    where: q
+      ? {
+          OR: [
+            { codigo: { contains: q, mode: "insensitive" } },
+            { nome: { contains: q, mode: "insensitive" } },
+            { molde: { codigo: { contains: q, mode: "insensitive" } } },
+            { molde: { nome: { contains: q, mode: "insensitive" } } },
+          ],
+        }
+      : undefined,
     orderBy: [{ molde: { codigo: "asc" } }, { codigo: "asc" }],
     include: { molde: true },
   });
@@ -27,6 +37,19 @@ export default async function StockPage({
             Não é possível registar essa saída: não há stock suficiente.
           </p>
         )}
+
+        <form method="GET" className="mb-6 flex gap-2 max-w-md">
+          <input
+            type="text"
+            name="q"
+            defaultValue={q ?? ""}
+            placeholder="Procurar por peça, código ou molde..."
+            className="input"
+          />
+          <button type="submit" className="btn btn-secondary whitespace-nowrap">
+            Procurar
+          </button>
+        </form>
 
         <div className="flex flex-col gap-3">
           {pecas.map((p) => {
@@ -77,7 +100,9 @@ export default async function StockPage({
 
           {pecas.length === 0 && (
             <p style={{ color: "var(--color-text-dim)" }}>
-              Ainda não há peças registadas. Adiciona peças dentro de cada molde.
+              {q
+                ? `Sem peças que correspondam a "${q}".`
+                : "Ainda não há peças registadas. Adiciona peças dentro de cada molde."}
             </p>
           )}
         </div>
