@@ -7,12 +7,20 @@ import Link from "next/link";
 export default async function MoldesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ erroPin?: string }>;
+  searchParams: Promise<{ erroPin?: string; q?: string }>;
 }) {
   const operador = await requireOperador();
-  const { erroPin } = await searchParams;
+  const { erroPin, q } = await searchParams;
 
   const moldes = await prisma.molde.findMany({
+    where: q
+      ? {
+          OR: [
+            { codigo: { contains: q, mode: "insensitive" } },
+            { nome: { contains: q, mode: "insensitive" } },
+          ],
+        }
+      : undefined,
     orderBy: { codigo: "asc" },
     include: {
       _count: {
@@ -35,6 +43,19 @@ export default async function MoldesPage({
             PIN incorreto. O molde não foi apagado.
           </p>
         )}
+
+        <form method="GET" className="mb-6 flex gap-2 max-w-md">
+          <input
+            type="text"
+            name="q"
+            defaultValue={q ?? ""}
+            placeholder="Procurar por código ou nome..."
+            className="input"
+          />
+          <button type="submit" className="btn btn-secondary whitespace-nowrap">
+            Procurar
+          </button>
+        </form>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
           {moldes.map((m) => (
@@ -60,7 +81,9 @@ export default async function MoldesPage({
           ))}
 
           {moldes.length === 0 && (
-            <p style={{ color: "var(--color-text-dim)" }}>Ainda não há moldes registados.</p>
+            <p style={{ color: "var(--color-text-dim)" }}>
+              {q ? `Sem moldes que correspondam a "${q}".` : "Ainda não há moldes registados."}
+            </p>
           )}
         </div>
 
